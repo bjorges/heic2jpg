@@ -30,24 +30,26 @@ echo.
 set converted=0
 set skipped=0
 
-for /r "%SRC%" %%F in (*.heic *.HEIC) do (
-    set "input=%%F"
-    set "output=%%~dpnF.jpg"
-
-    if exist "!output!" (
-        echo SKIP: %%~nxF  (jpg already exists)
-        set /a skipped+=1
-    ) else (
-        echo CONVERT: %%~nxF
-        magick "!input!" "!output!"
-        if errorlevel 1 (
-            echo   WARNING: failed to convert %%~nxF
-        ) else (
-            set /a converted+=1
-        )
-    )
-)
+for /r "%SRC%" %%F in (*.heic *.HEIC) do call :process "%%F"
 
 echo.
 echo Done. Converted: %converted%  Skipped: %skipped%
 pause
+exit /b 0
+
+:process
+set "input=%~1"
+set "output=%~dpn1.jpg"
+if exist "%output%" (
+    echo SKIP: %~nx1  [jpg already exists]
+    set /a skipped+=1
+    exit /b
+)
+echo CONVERT: %~nx1
+magick "%input%" "%output%"
+if errorlevel 1 (
+    echo   WARNING: failed to convert %~nx1
+) else (
+    set /a converted+=1
+)
+exit /b
