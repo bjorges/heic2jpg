@@ -30,7 +30,7 @@ echo.
 set converted=0
 set skipped=0
 
-for /r "%SRC%" %%F in (*.heic *.HEIC) do call :process "%%F"
+for /r "%SRC%" %%F in (*.heic) do call :process "%%F"
 
 echo.
 echo Done. Converted: %converted%  Skipped: %skipped%
